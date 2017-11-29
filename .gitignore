@@ -1,0 +1,6 @@
+face/
+__pycache__/
+image/
+logs/
+test_face/
+
