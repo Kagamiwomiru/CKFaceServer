@@ -18,7 +18,7 @@ print(categories)
 #people=3
 nb_classes = len(categories)
 image_size = 96
-epochs=1
+epochs=10
 def main():
     X_train, X_test, y_train, y_test = np.load("./face/face.npy")
     X_train = X_train.astype("float") / 256
