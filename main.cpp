@@ -115,20 +115,19 @@ vector<Rect> detectFaceInImage(Mat &image) {
 }
 
 int main(int argc ,char *argv[]) {
-	if(argc<2){
-		printf("argment error!\n");
-		return -1;
-		}
+	if(argc<2) return -1;
 	string input_path;
 	string output_path;
+	char rmcmd[SYSCMD];//set input_filepath
 	int num_images=100;
 	char input[255];
 	sprintf(input,"./face/%s/",argv[1]);
 	input_path=string(input);
-	input_path +="%03d.jpg";
+	input_path +="in_%03d.jpg";
 	output_path=string(input);
 	output_path+="out_%03d.jpg";
 
+	sprintf(rmcmd,"rm %sin_*",input);
 
 	int y1, x1;
 	int count = 0;
@@ -136,11 +135,6 @@ int main(int argc ,char *argv[]) {
 	vector<Rect> face;
 	VideoCapture cap(input_path);
 
-/*	for (int i = 0; i < 4; i++) {
-		ran += 'a' + (rand() % 26);
-	}*/
-
-//	string out = output_path+ran + jpg;
 	string out = output_path;
 
 	VideoWriter writer(out, 0, 0.0, Size(200, 200));
@@ -149,7 +143,7 @@ int main(int argc ,char *argv[]) {
 		cap >> in;
 		face = detectFaceInImage(in);
 		if (face.size() == 1) {
-			Mat out(Size(face[0].width, face[0].height), CV_8UC3, Scalar(0, 0, 0));	// 真っ黒(全ての画素値が0)なMat型配列(画像データ)を作成
+			Mat out(Size(face[0].width, face[0].height), CV_8UC3, Scalar(0, 0, 0));	
 			y1 = face[0].height + face[0].y;
 			x1 = face[0].width + face[0].x;
 			for (int y = face[0].y; y < y1; ++y) {
@@ -164,5 +158,7 @@ int main(int argc ,char *argv[]) {
 		}
 		count++;
 	}
+
+	system(rmcmd);//Delete all input_file. 
 return 0;
 }
