@@ -115,6 +115,8 @@ vector<Rect> detectFaceInImage(Mat &image) {
 }
 
 int main(int argc ,char *argv[]) {
+	clock_t start_time,end_time;
+	start_time=clock();
 	if(argc<2) return -1;
 	string input_path;
 	string output_path;
@@ -160,5 +162,7 @@ int main(int argc ,char *argv[]) {
 	}
 
 	system(rmcmd);//Delete all input_file. 
+	end_time=clock();
+	printf("Concert(Server):%.2f[sec]\n",(double)(end_time-start_time)/CLOCKS_PER_SEC);
 return 0;
 }
