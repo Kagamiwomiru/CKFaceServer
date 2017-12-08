@@ -58,6 +58,8 @@ def model_train(X, y):
     tf_lg=keras.callbacks.TensorBoard(log_dir="./logs", histogram_freq=1)
     log=[tf_lg]
     history = model.fit(X, y, batch_size=32, nb_epoch=epochs,callbacks=log,validation_split=0.1)
+    json_string=model.to_json()
+    open('./face/face.json','w').write(json_string)
     hdf5_file = "./face/face-model.h5"
     model.save_weights(hdf5_file)
     return model
