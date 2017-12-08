@@ -14,6 +14,11 @@ for x in os.listdir(root_dir):
     if os.path.isdir(root_dir + x):
         categories.append(x)
 print(categories)
+#リスト書き出し
+f = open("./categories.txt","w")
+for x in categories:
+    f.write(str(x) + "\n")
+f.close()
 
 #people=3
 nb_classes = len(categories)
