@@ -8,31 +8,39 @@ from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras.backend import tensorflow_backend as backend
 root_dir = "./face/"
-#categories = ["Kagami","Kato","Uchiyama","the_others"]
-categories=[]
-for x in os.listdir(root_dir):
-    if os.path.isdir(root_dir + x):
-        categories.append(x)
-print(categories)
-#リスト書き出し
-f = open("./categories.txt","w")
-for x in categories:
-    f.write(str(x) + "\n")
-f.close()
-
-#people=3
-nb_classes = len(categories)
 image_size = 96
 epochs=10
+
 def main():
     X_train, X_test, y_train, y_test = np.load("./face/face.npy")
     X_train = X_train.astype("float") / 256
     X_test  = X_test.astype("float")  / 256
     y_train = np_utils.to_categorical(y_train, nb_classes)
     y_test  = np_utils.to_categorical(y_test, nb_classes)
+    
+		
     model = model_train(X_train, y_train)
     model_eval(model, X_test, y_test)
-    #os.system("bash ./sendToClient.sh")
+
+
+def load_people():
+    #categories = ["Kagami","Kato","Uchiyama","the_others"]
+    categories=[]
+    for x in os.listdir(root_dir):
+     if os.path.isdir(root_dir + x):
+         categories.append(x)
+    print(categories)
+    #リスト書き出し
+    f = open("./categories.txt","w")
+    for x in categories:
+       f.write(str(x) + "\n")
+    f.close()
+
+    #people=3
+    return len(categories)
+
+
+
 
 def build_model(in_shape):
     model = Sequential()
@@ -75,4 +83,6 @@ def model_eval(model, X, y):
     print('accuracy=', score[1])
     backend.clear_session()
 if __name__ == "__main__":
-    main()
+		nb_classes=load_people()
+		main()
+
