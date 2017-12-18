@@ -9,6 +9,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten,Input
 from keras.layers import AveragePooling2D
 from keras.utils import np_utils
 from keras.applications.resnet50 import ResNet50
+#from keras.applications.vgg16 import VGG16
 from keras.optimizers import SGD
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
@@ -19,7 +20,7 @@ batch_size = 8
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
-epochs=10
+epochs=5
 #学習したモデル
 ModelWeightData="./face/face-model.h5"
 ModelArcData="./face/face.json"
@@ -31,7 +32,7 @@ def main():
     model,opt=model_build(mizumashi_generator,x,base_model)
     model=learning(model,opt,mizumashi_generator,val_generator)
 
-    X_test, y_test = np.load(NumpyFile)
+    X_train,X_test, y_train,y_test = np.load(NumpyFile)
     X_test  = X_test.astype("float")  / 256
     y_test  = np_utils.to_categorical(y_test, nb_classes)
     
@@ -66,9 +67,10 @@ def data_augmentation():
     return (mizumashi_generator,val_generator)
 
 def load_model():
-    #重みをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
+    #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
     base_model = ResNet50(weights='imagenet', include_top=False,
                          input_tensor=Input(shape=(img_size, img_size, 3)))
+    base_model.summary()
     x=base_model.output
     #入力を平滑化
     x=Flatten()(x)
@@ -95,7 +97,7 @@ def learning(model,opt,mizumashi_generator,val_generator):
     #モデルの構造と重みを保存。
     json_string=model.to_json()
     open(ModelArcData,'w').write(json_string)
-    model.save_weights(ModelD)
+    model.save_weights(ModelWeightData)
     
     return model
 
