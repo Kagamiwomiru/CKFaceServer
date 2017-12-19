@@ -8,8 +8,8 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten,Input
 from keras.layers import AveragePooling2D
 from keras.utils import np_utils
-from keras.applications.resnet50 import ResNet50
-#from keras.applications.vgg16 import VGG16
+#from keras.applications.resnet50 import ResNet50
+from keras.applications.inception_v3 import InceptionV3
 from keras.optimizers import SGD
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
@@ -20,7 +20,7 @@ batch_size = 8
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
-epochs=5
+epochs=10
 #学習したモデル
 ModelWeightData="./face/face-model.h5"
 ModelArcData="./face/face.json"
@@ -68,9 +68,9 @@ def data_augmentation():
 
 def load_model():
     #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
-    base_model = ResNet50(weights='imagenet', include_top=False,
+    base_model = InceptionV3(weights='imagenet', include_top=False,
                          input_tensor=Input(shape=(img_size, img_size, 3)))
-    base_model.summary()
+   #base_model.summary()
     x=base_model.output
     #入力を平滑化
     x=Flatten()(x)
@@ -101,46 +101,6 @@ def learning(model,opt,mizumashi_generator,val_generator):
     
     return model
 
-
-
-
-
-"""
-def build_model(in_shape):
-    model = Sequential()
-    model.add(Convolution2D(32, 3, 3,
-	border_mode='same',
-	input_shape=in_shape))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-    model.add(Convolution2D(64, 3, 3, border_mode='same'))
-    model.add(Activation('relu'))
-    model.add(Convolution2D(64, 3, 3))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-    model.add(Flatten())
-    model.add(Dense(512))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(nb_classes))
-    model.add(Activation('softmax'))
-    model.compile(loss='binary_crossentropy',
-	optimizer='rmsprop',
-	metrics=['accuracy'])
-    return model
-
-def model_train(X, y):
-    model = build_model(X.shape[1:])
-    tf_lg=keras.callbacks.TensorBoard(log_dir="./logs", histogram_freq=1)
-    log=[tf_lg]
-    history = model.fit(X, y, batch_size=32, nb_epoch=epochs,callbacks=log,validation_split=0.1)
-    json_string=model.to_json()
-    open('./face/face.json','w').write(json_string)
-    hdf5_file = "./face/face-model.h5"
-    model.save_weights(hdf5_file)
-    return model
-"""
 def model_eval(model, X, y):
     score = model.evaluate(X, y)
     print('loss=', score[0])

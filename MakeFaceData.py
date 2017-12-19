@@ -11,7 +11,7 @@ for x in os.listdir(root_dir):
         categories.append(x)
 print(categories)
 nb_classes = len(categories)
-image_size = 96
+image_size = 224
 
 X = []
 Y = []
