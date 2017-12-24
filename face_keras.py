@@ -9,18 +9,21 @@ from keras.layers import Dense, Dropout, Activation, Flatten,Input
 from keras.layers import AveragePooling2D
 from keras.utils import np_utils
 #from keras.applications.resnet50 import ResNet50
-from keras.applications.inception_v3 import InceptionV3
+#from keras.applications.mobilenet import MobileNet
+from keras.applications.xception import Xception
 from keras.optimizers import SGD
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
 
 # 画像サイズ．ResNetを使う時は224
 img_size = 224
-batch_size = 8
+batch_size = 16
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
 epochs=10
+#ログファイル
+log_filepath="./logs/"
 #学習したモデル
 ModelWeightData="./face/face-model.h5"
 ModelArcData="./face/face.json"
@@ -68,8 +71,8 @@ def data_augmentation():
 
 def load_model():
     #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
-    base_model = InceptionV3(weights='imagenet', include_top=False,
-                         input_tensor=Input(shape=(img_size, img_size, 3)))
+    base_model = Xception(weights='imagenet', include_top=False,
+                         input_tensor=Input(shape=(img_size,img_size, 3)))
    #base_model.summary()
     x=base_model.output
     #入力を平滑化
@@ -88,11 +91,13 @@ def model_build(mizumashi_generator,x,base_model):
 
 def learning(model,opt,mizumashi_generator,val_generator):
     model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+    tb_cb=keras.callbacks.TensorBoard(log_dir=log_filepath,histogram_freq=0)
+    cbks=[tb_cb]
     history = model.fit_generator(mizumashi_generator,
                                   validation_data=val_generator,
                                   steps_per_epoch=mizumashi_generator.samples // batch_size,
                                   validation_steps=val_generator.samples // batch_size,
-                                  epochs=epochs,
+                                  epochs=epochs,callbacks=cbks,
                                   verbose=1)
     #モデルの構造と重みを保存。
     json_string=model.to_json()
