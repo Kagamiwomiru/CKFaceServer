@@ -22,24 +22,20 @@ from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 # 画像サイズ．ResNetを使う時は224
 img_size = 224
-batch_size = 16
+batch_size = 32
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
-epochs=5
+epochs=20
 #ログファイル
 log_filepath="./logs/"
 #学習したモデル
 ModelWeightData="./face/face-model.h5"
 ModelArcData="./face/face.json"
-NumpyFile="./face/face.npy"
+# NumpyFile="./face/face.npy"
 classFile="./face/categories.json"
 def main():
-    mizumashi_generator,val_generator=data_augmentation()
-    X_train,X_test,y_train,y_test=np.load(NumpyFile)
-    X_test  = X_test.astype("float")  / 256
-    y_test  = np_utils.to_categorical(y_test, nb_classes)
-    #val_generator = np_utils.to_categorical(val_generator, nb_classes)
+    mizumashi_generator,val_generator,valX,valy=data_augmentation()
     x,base_model=model_load()
     model,opt=model_build(mizumashi_generator,x,base_model)
     model=learning(model,opt,mizumashi_generator,val_generator)
@@ -49,22 +45,10 @@ def main():
     print(indices_to_class)
     f=open(classFile,'w')
     json.dump(indices_to_class,f)
-    model_eval(model, X_test, y_test)
+    model_eval(model, valX, valy)
     backend.clear_session()
 
 
-def load_people():
-    categories=[]
-    for x in os.listdir(root_dir):
-     if os.path.isdir(root_dir + x):
-         categories.append(x)
-    print(categories)
-    #リスト書き出し
-    f = open("./categories.txt","w")
-    for x in categories:
-       f.write(str(x) + "\n")
-    f.close()
-    return len(categories)
 
 
 def data_augmentation():
@@ -73,9 +57,9 @@ def data_augmentation():
     mizumashi_generator=mizumashi_data.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=True)
     #テスト画像データを水増しする。
     val_datagen=ImageDataGenerator()
-    val_generator=val_datagen.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=False)
-
-    return (mizumashi_generator,val_generator)
+    val_gen=val_generator=val_datagen.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=False)
+    valX,valy=val_gen.next()
+    return (mizumashi_generator,val_generator,valX,valy)
 
 def model_load():
     #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
@@ -109,9 +93,7 @@ def learning(model,opt,mizumashi_generator,val_generator):
                                   validation_steps=val_generator.samples // batch_size,
                                   epochs=epochs,callbacks=cbks,
                                   verbose=1)
-    
-    #history=model.fit(mizumashi_generator,val_generator,epochs=epochs,callbacks=cbks,verbose=1)
-    
+        
     #モデルの構造と重みを保存。
     json_string=model.to_json()
     open(ModelArcData,'w').write(json_string)
@@ -125,6 +107,5 @@ def model_eval(model, X, y):
     print('accuracy=', score[1])
 
 if __name__ == "__main__":
-		nb_classes=load_people()
 		main()
 
