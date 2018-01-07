@@ -2,7 +2,8 @@ import os, glob
 import numpy as np
 from sklearn import cross_validation
 from keras.preprocessing.image import load_img, img_to_array
-
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 root_dir = "./face/"
 #categories=["Kagami","Kato","Uchiyama","the_others"]
 categories=[]

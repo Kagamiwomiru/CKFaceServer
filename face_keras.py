@@ -9,19 +9,24 @@ from keras.layers import Dense, Dropout, Activation, Flatten,Input
 from keras.layers import AveragePooling2D
 from keras.utils import np_utils
 from keras.applications.resnet50 import ResNet50
-#from keras.applications.mobilenet import MobileNet
 #from keras.applications.xception import Xception
-from keras.optimizers import SGD
+#from keras.optimizers import SGD
+#from keras.optimizers import RMSprop
+#from keras.optimizers import Adagrad
+#from keras.optimizers import Adadelta
+from keras.optimizers import Adam
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
 import json
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 # 画像サイズ．ResNetを使う時は224
 img_size = 224
 batch_size = 16
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
-epochs=1
+epochs=5
 #ログファイル
 log_filepath="./logs/"
 #学習したモデル
@@ -35,7 +40,7 @@ def main():
     X_test  = X_test.astype("float")  / 256
     y_test  = np_utils.to_categorical(y_test, nb_classes)
     #val_generator = np_utils.to_categorical(val_generator, nb_classes)
-    x,base_model=load_model()
+    x,base_model=model_load()
     model,opt=model_build(mizumashi_generator,x,base_model)
     model=learning(model,opt,mizumashi_generator,val_generator)
 
@@ -44,7 +49,7 @@ def main():
     print(indices_to_class)
     f=open(classFile,'w')
     json.dump(indices_to_class,f)
-    #model_eval(model, val_generator, indices_to_class)
+    model_eval(model, X_test, y_test)
     backend.clear_session()
 
 
@@ -72,7 +77,7 @@ def data_augmentation():
 
     return (mizumashi_generator,val_generator)
 
-def load_model():
+def model_load():
     #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
     base_model = ResNet50(weights='imagenet', include_top=False,
                          input_tensor=Input(shape=(img_size,img_size, 3)))
@@ -89,7 +94,8 @@ def model_build(mizumashi_generator,x,base_model):
     # 最後の全結合層の出力次元はクラスの数(= mizumashi_generator.num_class)
     predictions = Dense(mizumashi_generator.num_classes,kernel_initializer='glorot_uniform', activation='softmax')(x)
     model = Model(inputs=base_model.input, outputs=predictions)
-    opt = SGD(lr=.01, momentum=.9)
+    #opt = Adagrad()
+    opt = Adam()
     return (model,opt)
 
 def learning(model,opt,mizumashi_generator,val_generator):
