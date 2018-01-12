@@ -24,7 +24,8 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 img_size = 224
 batch_size = 32
 #以下ディレクトリに入っている画像を読み込む
-root_dir = "./face/"
+root_dir = "./test/"
+#root_dir = "./face/"
 #学習データを何周するか
 epochs=20
 #ログファイル
@@ -54,7 +55,9 @@ def main():
 def data_augmentation():
     #学習画像データを水増し（データ拡張）を行う
     mizumashi_data=ImageDataGenerator()
-    mizumashi_generator=mizumashi_data.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=True)
+    miz_gen=mizumashi_generator=mizumashi_data.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=True)
+    import draw_img as di
+    di.draw_img(miz_gen)
     #テスト画像データを水増しする。
     val_datagen=ImageDataGenerator()
     val_gen=val_generator=val_datagen.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=False)
