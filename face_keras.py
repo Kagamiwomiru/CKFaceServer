@@ -10,11 +10,11 @@ from keras.layers import AveragePooling2D
 from keras.utils import np_utils
 from keras.applications.resnet50 import ResNet50
 #from keras.applications.xception import Xception
-#from keras.optimizers import SGD
+from keras.optimizers import SGD
 #from keras.optimizers import RMSprop
 #from keras.optimizers import Adagrad
 #from keras.optimizers import Adadelta
-from keras.optimizers import Adam
+#from keras.optimizers import Adam
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
 import json
@@ -32,7 +32,6 @@ log_filepath="./logs/"
 #学習したモデル
 ModelWeightData="./face/face-model.h5"
 ModelArcData="./face/face.json"
-# NumpyFile="./face/face.npy"
 classFile="./face/categories.json"
 def main():
     mizumashi_generator,val_generator,valX,valy=data_augmentation()
@@ -78,8 +77,8 @@ def model_build(mizumashi_generator,x,base_model):
     # 最後の全結合層の出力次元はクラスの数(= mizumashi_generator.num_class)
     predictions = Dense(mizumashi_generator.num_classes,kernel_initializer='glorot_uniform', activation='softmax')(x)
     model = Model(inputs=base_model.input, outputs=predictions)
-    #opt = Adagrad()
-    opt = Adam()
+    opt = SGD()
+    #opt = Adam()
     return (model,opt)
 
 def learning(model,opt,mizumashi_generator,val_generator):
