@@ -8,7 +8,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten,Input
 from keras.layers import AveragePooling2D
 from keras.utils import np_utils
-from keras.applications.resnet50 import ResNet50
+from keras.applications.mobilenet import MobileNet
 #from keras.applications.xception import Xception
 from keras.optimizers import SGD
 #from keras.optimizers import RMSprop
@@ -62,20 +62,7 @@ def data_augmentation():
 
 def model_load():
     #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
-    base_model = ResNet50(weights='imagenet', include_top=False,
-                         input_tensor=Input(shape=(img_size,img_size, 3)))
-   #base_model.summary()
-    x=base_model.output
-    #入力を平滑化
-    x=Flatten()(x)
-    #過学習防止
-    x=Dropout(.4)(x)
-
-    return (x,base_model)
-
-def model_load():
-    #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
-    base_model = ResNet50(weights='imagenet', include_top=False,
+    base_model = MobileNet(weights='imagenet', include_top=False,
                          input_tensor=Input(shape=(img_size,img_size, 3)))
    #base_model.summary()
     x=base_model.output
