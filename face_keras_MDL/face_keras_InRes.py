@@ -30,8 +30,11 @@ epochs=20
 #ログファイル
 log_filepath="./logs/"
 #学習したモデル
-ModelWeightData="./face/face-model.h5"
-ModelArcData="./face/face.json"
+import sys
+args=sys.argv
+# python3 ResNet50 $i
+ModelWeightData="./OUTPUT_MODEL/"+args[1]+"/face-model"+args[2]+".h5"
+ModelArcData="./OUTPUT_MODEL/"+args[1]+"/face"+args[2]+".json"
 classFile="./face/categories.json"
 def main():
     mizumashi_generator,val_generator,valX,valy=data_augmentation()

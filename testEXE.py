@@ -8,7 +8,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten,Input
 from keras.layers import AveragePooling2D
 from keras.utils import np_utils
-from keras.applications.inception_v3 import Inception_v3
+from keras.applications.vgg16 import VGG16
 #from keras.applications.xception import Xception
 from keras.optimizers import SGD
 #from keras.optimizers import RMSprop
@@ -18,8 +18,11 @@ from keras.optimizers import SGD
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
 import json
-from PIL import ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+
+# In[11]:
+
+
 # 画像サイズ．ResNetを使う時は224
 img_size = 224
 batch_size = 32
@@ -36,6 +39,12 @@ args=sys.argv
 ModelWeightData="./OUTPUT_MODEL/"+args[1]+"/face-model"+args[2]+".h5"
 ModelArcData="./OUTPUT_MODEL/"+args[1]+"/face"+args[2]+".json"
 classFile="./face/categories.json"
+ModelWeightData
+
+
+# In[12]:
+
+
 def main():
     mizumashi_generator,val_generator,valX,valy=data_augmentation()
     x,base_model=model_load()
@@ -65,7 +74,7 @@ def data_augmentation():
 
 def model_load():
     #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
-    base_model = Inception_v3(weights='imagenet', include_top=False,
+    base_model = VGG16(weights='imagenet', include_top=False,
                          input_tensor=Input(shape=(img_size,img_size, 3)))
    #base_model.summary()
     x=base_model.output
@@ -110,4 +119,5 @@ def model_eval(model, X, y):
 
 if __name__ == "__main__":
 		main()
+
 
