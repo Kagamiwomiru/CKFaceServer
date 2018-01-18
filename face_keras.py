@@ -18,11 +18,10 @@ from keras.optimizers import SGD
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
 import json
-from PIL import ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 # 画像サイズ．ResNetを使う時は224
 img_size = 224
-batch_size = 32
+batch_size = 10
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
