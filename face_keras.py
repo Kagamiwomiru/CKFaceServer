@@ -8,24 +8,19 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten,Input
 from keras.layers import AveragePooling2D
 from keras.utils import np_utils
-from keras.applications.resnet50 import ResNet50
-#from keras.applications.xception import Xception
+from keras.applications.xception import Xception
 from keras.optimizers import SGD
-#from keras.optimizers import RMSprop
-#from keras.optimizers import Adagrad
-#from keras.optimizers import Adadelta
-#from keras.optimizers import Adam
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
 import json
 
 # 画像サイズ．ResNetを使う時は224
 img_size = 224
-batch_size = 10
+batch_size = 32
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
-epochs=20
+epochs=10
 #ログファイル
 log_filepath="./logs/"
 #学習したモデル
@@ -61,29 +56,18 @@ def data_augmentation():
 
 def model_load():
     #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
-    base_model = ResNet50(weights='imagenet', include_top=False,
+    base_model = Xception(weights='imagenet', include_top=False,
                          input_tensor=Input(shape=(img_size,img_size, 3)))
    #base_model.summary()
     x=base_model.output
     #入力を平滑化
     x=Flatten()(x)
     #過学習防止
-    x=Dropout(.4)(x)
+    # x=Dropout(.8)(x)
+
 
     return (x,base_model)
 
-def model_load():
-    #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
-    base_model = ResNet50(weights='imagenet', include_top=False,
-                         input_tensor=Input(shape=(img_size,img_size, 3)))
-   #base_model.summary()
-    x=base_model.output
-    #入力を平滑化
-    x=Flatten()(x)
-    #過学習防止
-    x=Dropout(.4)(x)
-
-    return (x,base_model)
 
 def model_build(mizumashi_generator,x,base_model):
     # 最後の全結合層の出力次元はクラスの数(= mizumashi_generator.num_class)
