@@ -13,22 +13,27 @@ from keras.optimizers import SGD
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
 import json
-
+import sys
+args=sys.argv
+#python3 face_keras_LR.py 0.01 $i
 # 画像サイズ．ResNetを使う時は224
 img_size = 224
 batch_size = 32
 #以下ディレクトリに入っている画像を読み込む
-root_dir = "./face/"
+root_dir = "../face/"
 #学習データを何周するか
 epochs=10
 #ログファイル
-log_filepath="./logs/"
+log_filepath="../logs/"
 #学習したモデル
-ModelWeightData="./face/face-model.h5"
-ModelArcData="./face/face.json"
-classFile="./face/categories.json"
+ModelWeightData="../face/"+args[1]+"/face-model"+args[2]+".h5"
+ModelArcData="../face/"+args[1]+"/face"+args[2]+".json"
+classFile="../face/categories.json"
 #学習率(SGD(lr=???))
-learning_rate=0.01
+learning_rate=float(args[1])
+
+
+
 def main():
     mizumashi_generator,val_generator,valX,valy=data_augmentation()
     x,base_model=model_load()
@@ -48,10 +53,10 @@ def main():
 
 def data_augmentation():
     #学習画像データを水増し（データ拡張）を行う
-    mizumashi_data=ImageDataGenerator(rotation_range=180,width_shift_range=0.2)
+    mizumashi_data=ImageDataGenerator()
     mizumashi_generator=mizumashi_data.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=True)
     #テスト画像データを水増しする。
-    val_datagen=ImageDataGenerator(rotation_range=180,width_shift_range=0.2)
+    val_datagen=ImageDataGenerator()
     val_gen=val_generator=val_datagen.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=False)
     valX,valy=val_gen.next()
     return (mizumashi_generator,val_generator,valX,valy)
