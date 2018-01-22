@@ -57,7 +57,11 @@ def data_augmentation():
     return (mizumashi_generator,val_generator,valX,valy)
 
 def model_load():
+<<<<<<< HEAD
     #重みvをimagenetとすると、学習済みパラメータを初期値としてXceptionを読み込む。
+=======
+    #重みvをimagenetとすると、学習済みパラメータを初期値としてResNet50を読み込む。
+>>>>>>> ddd2e9665a080b27e44812d9c13f2bb8eb19c1e4
     base_model = Xception(weights='imagenet', include_top=False,
                          input_tensor=Input(shape=(img_size,img_size, 3)))
    #base_model.summary()
@@ -65,8 +69,9 @@ def model_load():
     #入力を平滑化
     x=Flatten()(x)
     #過学習防止
-    x=Dropout(.4)(x)
+    # x=Dropout(.8)(x)
 
+<<<<<<< HEAD
     return (x,base_model)
 
 def model_load():
@@ -79,8 +84,11 @@ def model_load():
     x=Flatten()(x)
     #過学習防止
     x=Dropout(.4)(x)
+=======
+>>>>>>> ddd2e9665a080b27e44812d9c13f2bb8eb19c1e4
 
     return (x,base_model)
+
 
 def model_build(mizumashi_generator,x,base_model):
     # 最後の全結合層の出力次元はクラスの数(= mizumashi_generator.num_class)
