@@ -48,10 +48,10 @@ def main():
 
 def data_augmentation():
     #学習画像データを水増し（データ拡張）を行う
-    mizumashi_data=ImageDataGenerator(rotation_range=180,width_shift_range=0.2)
+    mizumashi_data=ImageDataGenerator()
     mizumashi_generator=mizumashi_data.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=True)
     #テスト画像データを水増しする。
-    val_datagen=ImageDataGenerator(rotation_range=180,width_shift_range=0.2)
+    val_datagen=ImageDataGenerator()
     val_gen=val_generator=val_datagen.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=False)
     valX,valy=val_gen.next()
     return (mizumashi_generator,val_generator,valX,valy)
@@ -72,7 +72,7 @@ def model_load():
 
 def model_build(mizumashi_generator,x,base_model):
     # 最後の全結合層の出力次元はクラスの数(= mizumashi_generator.num_class)
-    predictions = Dense(mizumashi_generator.num_classes,kernel_initializer='glorot_uniform', activation='softmax')(x)
+    predictions = Dense(mizumashi_generator.num_classes,kernel_initializer='glorot_uniform', activation='sigmoid')(x)
     model = Model(inputs=base_model.input, outputs=predictions)
     opt = SGD(lr=learning_rate)
     #opt = Adam()
