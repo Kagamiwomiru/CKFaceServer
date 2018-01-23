@@ -26,8 +26,8 @@ epochs=10
 #ログファイル
 log_filepath="../logs/"
 #学習したモデル
-ModelWeightData="../face/"+args[1]+"/face-model"+args[2]+".h5"
-ModelArcData="../face/"+args[1]+"/face"+args[2]+".json"
+ModelWeightData="../"+args[1]+"/face-model"+args[2]+".h5"
+ModelArcData="../"+args[1]+"/face"+args[2]+".json"
 classFile="../face/categories.json"
 #学習率(SGD(lr=???))
 learning_rate=float(args[1])
@@ -98,7 +98,8 @@ def model_build(mizumashi_generator,x,base_model):
 def learning(model,opt,mizumashi_generator,val_generator):
     model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
     tb_cb=keras.callbacks.TensorBoard(log_dir=log_filepath,histogram_freq=0)
-    cbks=[tb_cb]
+    es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=0,verbose=1,mode='auto')
+    cbks=[tb_cb,es_cb]
     
     history = model.fit_generator(mizumashi_generator,
                                   validation_data=val_generator,
