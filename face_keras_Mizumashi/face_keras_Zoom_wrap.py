@@ -19,6 +19,8 @@ from keras import callbacks
 from keras.backend import tensorflow_backend as backend
 import json
 import glob
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import shutil
@@ -56,9 +58,9 @@ result_images="./result/"+args[1]+"/out"+args[2]+".png"
 
 #ImageGenerator
 os.mkdir(temp_dir) 
-test_data=ImageDataGenerator(rotation_range=180,width_shift_range=0.2)
-mizumashi_data=ImageDataGenerator(rotation_range=180,width_shift_range=0.2)
-val_datagen=ImageDataGenerator(rotation_range=180,width_shift_range=0.2)
+test_data=ImageDataGenerator(zoom_range=0.5,fill_mode='wrap')
+mizumashi_data=ImageDataGenerator(zoom_range=0.5,fill_mode='wrap')
+val_datagen=ImageDataGenerator(zoom_range=0.5,fill_mode='wrap')
 
 
 # In[4]:
