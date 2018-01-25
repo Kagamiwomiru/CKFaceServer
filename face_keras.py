@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[12]:
+# In[107]:
 
 
 import os
@@ -13,16 +13,13 @@ from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras.backend import tensorflow_backend as backend
 from keras.preprocessing.image import ImageDataGenerator
-import json
-
 root_dir = "./face/"
 batch_size=32
 epochs=10
 img_size = 224
-classFile="./face/categories.json"
 
 
-# In[2]:
+# In[108]:
 
 
 def data_augmentation():
@@ -36,7 +33,7 @@ def data_augmentation():
     return (mizumashi_generator,val_generator,valX,valy)
 
 
-# In[3]:
+# In[109]:
 
 
 def build_model():
@@ -62,7 +59,7 @@ def build_model():
     return model
 
 
-# In[4]:
+# In[118]:
 
 
 def learning(model,mizumashi_generator,val_generator):
@@ -84,47 +81,28 @@ def learning(model,mizumashi_generator,val_generator):
 
 
 
-# In[8]:
-
-
-def model_eval(model, X, y):
-    score = model.evaluate(X, y,batch_size=batch_size)
-    print('loss=', score[0])
-    print('accuracy=', score[1])
-
-
-
-# In[5]:
+# In[119]:
 
 
 mizumashi_generator,val_generator,valX,valy=data_augmentation()
 
 
-# In[6]:
+# In[120]:
 
 
 model=build_model()
 
 
-# In[7]:
+# In[121]:
 
 
 learning(model,mizumashi_generator,val_generator)
 
-
-# In[13]:
-
-
 # class と indexの対応を逆にする
-indices_to_class = dict((v, k)   for k, v in mizumashi_generator.class_indices.items())
+indices_to_class = dict((v, k)
+                        for k, v in mizumashi_generator.class_indices.items())
 print(indices_to_class)
-f=open(classFile,'w')
-json.dump(indices_to_class,f)
-
-
-# In[14]:
-
-
+f = open(classFile, 'w')
+json.dump(indices_to_class, f)
 model_eval(model, valX, valy)
 backend.clear_session()
-
