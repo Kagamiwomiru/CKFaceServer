@@ -12,6 +12,7 @@ from keras.applications.xception import Xception
 from keras.optimizers import SGD
 from keras import callbacks
 from keras.backend import tensorflow_backend as backend
+import MakeData as DA
 import json
 
 # 画像サイズ．ResNetを使う時は224
@@ -20,15 +21,16 @@ batch_size = 32
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
-epochs=10
+epochs=50
 #ログファイル
 log_filepath="./logs/"
 #学習したモデル
-ModelWeightData="./face/face-model.h5"
-ModelArcData="./face/face.json"
-classFile="./face/categories.json"
+ModelWeightData = "./model/face-model.h5"
+ModelArcData = "./model/face.json"
+classFile = "./model/categories.json"
+
 #学習率(SGD(lr=???))
-learning_rate=0.01
+learning_rate=0.04
 def main():
     mizumashi_generator,val_generator,valX,valy=data_augmentation()
     x,base_model=model_load()
@@ -47,6 +49,9 @@ def main():
 
 
 def data_augmentation():
+    #輝度をあげる
+    os.system(bash ./initface.sh DA)
+    DA.high_cont('DA')#hoge_DA.jpgができる。
     #学習画像データを水増し（データ拡張）を行う
     mizumashi_data=ImageDataGenerator()
     mizumashi_generator=mizumashi_data.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=True)
@@ -72,7 +77,7 @@ def model_load():
 
 def model_build(mizumashi_generator,x,base_model):
     # 最後の全結合層の出力次元はクラスの数(= mizumashi_generator.num_class)
-    predictions = Dense(mizumashi_generator.num_classes,kernel_initializer='glorot_uniform', activation='sigmoid')(x)
+    predictions = Dense(mizumashi_generator.num_classes,kernel_initializer='glorot_uniform', activation='softmax')(x)
     model = Model(inputs=base_model.input, outputs=predictions)
     opt = SGD(lr=learning_rate)
     #opt = Adam()
