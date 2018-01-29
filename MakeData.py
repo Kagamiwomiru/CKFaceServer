@@ -55,7 +55,39 @@ def high_cont(id):
                 write=root_dir+img_dir+'/'+str(cnt)+'_'+str(id)+'.jpg'
                 cv2.imwrite(write,i)
                 cnt+=1
+#エッジ抽出を行います。
+def edge_detection(id):
+    root_dir='face/'
+    root_dirs=os.listdir(root_dir)
 
+    for img_dir in root_dirs:
+        print(img_dir)
+        img=glob.glob(root_dir+img_dir+'/*.jpg')
+        trans_img = []
+        for i in img:
 
+            # 画像の読み込み
+            img_src = cv2.imread(i,1)
+            trans_img.append(img_src)
+            #画像変換
+            edge_imgs=[]
+            for i in trans_img:
+                gray = cv2.cvtColor(i, cv2.COLOR_BGR2GRAY)
+                retval, binarized = cv2.threshold(gray, 224, 255, cv2.THRESH_BINARY_INV)
+                edges = cv2.Canny(gray,50,150,apertureSize = 3)
+                edge_imgs.append(edges)
+            # 保存
+            cnt=0
+            for i in edge_imgs:
+                write=root_dir+img_dir+'/'+str(cnt)+'_'+str(id)+'.jpg'
+                cv2.imwrite(write,i)
+                cnt+=1
 
-
+#学習データを削除します。
+def data_eraser(ers_number):
+    root_dir='face/'
+    root_dirs=os.listdir(root_dir)
+    for img_dir in root_dirs:
+        img=glob.glob(root_dir+img_dir+'/*.jpg')
+        for i in range(ers_number):
+            os.remove(img[i])
