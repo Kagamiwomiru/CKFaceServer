@@ -143,7 +143,7 @@ opt = SGD(lr=0.05)
 #learning()
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 tb_cb=keras.callbacks.TensorBoard(log_dir=log_filepath,histogram_freq=0)
-es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=0,verbose=1,mode='auto')
+es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=5,verbose=1,mode='auto')
 cbks=[tb_cb,es_cb]
 
 history = model.fit_generator(mizumashi_generator,
