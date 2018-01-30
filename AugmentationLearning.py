@@ -35,7 +35,7 @@ batch_size = 32
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
-epochs=50
+epochs=100
 #ログファイル
 log_filepath="./logs/"
 #学習したモデル
@@ -69,15 +69,20 @@ os.system('./initface.sh ')
 # In[598]:
 #水増し部分
 if(args[1]=='0'):
-    DA.high_cont('DA')
+    DA.sepia('sp')
+    DA.high_cont('sp','0')
     DA.data_eraser(int(110/2))
 elif(args[1]=='1'):
-    DA.edge_detection('hg')
+    DA.CE_gray('red','red')
+    DA.Shape(10,-1,'red','0')
     DA.data_eraser(int(110/2))
 elif (args[1]=='2'):
-    DA.high_cont('DA')
+    DA.CE_gray('green','green')
+    DA.Shape(10,-1,'green','0')
     DA.data_eraser(int(110/2))
-    DA.edge_detection('hg')
+elif (args[1]=='3'):
+    DA.CE_gray('blue','blue')
+    DA.Shape(10,-1,'blue','0')
     DA.data_eraser(int(110/2))
 
 
@@ -143,7 +148,7 @@ opt = SGD(lr=0.05)
 #learning()
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 tb_cb=keras.callbacks.TensorBoard(log_dir=log_filepath,histogram_freq=0)
-es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=5,verbose=1,mode='auto')
+es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=1,verbose=1,mode='auto')
 cbks=[tb_cb,es_cb]
 
 history = model.fit_generator(mizumashi_generator,
@@ -200,9 +205,9 @@ from keras.models import Model
 import collections #kerasと関係ないです。
 import json
 from keras.backend import tensorflow_backend as backend
-import time as t
+# import time as t
 import re #正解判別
-start_t=t.time()
+# start_t=t.time()
 #画像サイズ
 imsize = (96, 96)
 #人数
@@ -230,14 +235,14 @@ if __name__ == "__main__":
     print(pic)
     cnt=0 #正解数初期化
     #モデルの読み込み
-    start_tj=t.time()
+    # start_tj=t.time()
     model = model_from_json(open(keras_model).read())
-    end_tj=t.time()
+    # end_tj=t.time()
 
 
-    start_tw=t.time()
+    # start_tw=t.time()
     model.load_weights(keras_param)
-    end_tw=t.time()
+    # end_tw=t.time()
     #model.summary()
     with open("./model/categories.json",'r') as fi: 
         classes=json.load(fi)
@@ -254,9 +259,9 @@ if __name__ == "__main__":
         # 画像を要素に取る配列(images)にする必要がある
         images = np.array([np.array(img)])
         
-        start_tp=t.time()
+        # start_tp=t.time()
         prd = model.predict(images)
-        end_tp=t.time()
+        # end_tp=t.time()
 
         for j in range(people):
             print(classes[str(j)]+"の確率->"+"{0:3.3f}".format(prd[0][j]*100)+"%")
@@ -278,18 +283,11 @@ if __name__ == "__main__":
         print()
         print()
     backend.clear_session()
-    end_t=t.time()
+    # end_t=t.time()
     print("*---結果---*")
     print("CKFaceの解答=>",str(label_array)) 
     print("[DEBUG]正解数" + str(cnt) + "/" + str(len(label_array)))
     print("[DEBUG]正答率"+str(cnt/len(label_array)*100)+"%")
-    countLabel=collections.Counter(label_array)
-    result=countLabel.most_common(1)
+    # countLabel=collections.Counter(label_array)
+    # result=countLabel.most_common(1)
     # print("あなたは"+classes[str(result[0][0])]+"さんです。")
-
-   
-    
-    print("【keras_auth.py】"+"{0:.5f}".format(end_t-start_t)+"秒")
-    print("【model_from_json】"+"{0:.5f}".format(end_tj-start_tj)+"秒")
-    print("【load_weights】"+"{0:.5f}".format(end_tw-start_tw)+"秒")
-    print("【predict】"+"{0:.5f}".format(end_tp-start_tp)+"秒")
