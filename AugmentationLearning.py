@@ -34,6 +34,7 @@ img_size = 224
 batch_size = 32
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
+val_dir="./val_face/"
 #学習データを何周するか
 epochs=100
 #ログファイル
@@ -70,30 +71,32 @@ os.system('./initface.sh ')
 #水増し部分
 if(args[1]=='0'):
     DA.sepia('sp')
-    DA.high_cont('sp','0')
-    DA.data_eraser(int(110/2))
+    # DA.data_eraser(int(110/2))
 elif(args[1]=='1'):
     DA.CE_gray('red','red')
     DA.Shape(10,-1,'red','0')
-    DA.data_eraser(int(110/2))
+    # DA.data_eraser(int(110/2))
 elif (args[1]=='2'):
     DA.CE_gray('green','green')
     DA.Shape(10,-1,'green','0')
-    DA.data_eraser(int(110/2))
+    # DA.data_eraser(int(110/2))
 elif (args[1]=='3'):
     DA.CE_gray('blue','blue')
     DA.Shape(10,-1,'blue','0')
-    DA.data_eraser(int(110/2))
-
-
+    # DA.data_eraser(int(110/2))
+elif (args[1] == '4'):
+    DA.Shape(10, -1, 'sp', '0')
+elif (args[1] == '5'):
+    DA.sepia('sp')
+    DA.Shape(10, -1, 'spsp', '0')
 # In[599]:
 
 
 #ImageGenerator
 # mizumashi_data=ImageDataGenerator(height_shift_range=0.2,zoom_range=0.2,shear_range=40) 
 # val_datagen=ImageDataGenerator(height_shift_range=0.2,zoom_range=0.2,shear_range=40) 
-mizumashi_data=ImageDataGenerator() 
-val_datagen=ImageDataGenerator() 
+mizumashi_data = ImageDataGenerator(rotation_range=15)
+val_datagen = ImageDataGenerator()
 
 
 # In[600]:
@@ -103,7 +106,7 @@ val_datagen=ImageDataGenerator()
 mizumashi_generator=mizumashi_data.flow_from_directory(class_mode="categorical",directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=True)
 #テスト画像データを水増しする。
 
-val_gen=val_generator=val_datagen.flow_from_directory(class_mode="categorical",directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=False)
+val_gen=val_generator=val_datagen.flow_from_directory(class_mode="categorical",directory=val_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=False)
 valX,valy=val_gen.next()
 
 
@@ -139,24 +142,23 @@ x=Dropout(.4)(x)
 # 最後の全結合層の出力次元はクラスの数(= mizumashi_generator.num_class)
 predictions = Dense(mizumashi_generator.num_classes,kernel_initializer='glorot_uniform', activation='softmax')(x)
 model = Model(inputs=base_model.input, outputs=predictions)
-opt = SGD(lr=0.05)
+opt = SGD(lr=0.02)
 
 
 # In[604]:
 
-
 #learning()
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 tb_cb=keras.callbacks.TensorBoard(log_dir=log_filepath,histogram_freq=0)
-es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=1,verbose=1,mode='auto')
+es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=2,verbose=1,mode='auto')
 cbks=[tb_cb,es_cb]
 
 history = model.fit_generator(mizumashi_generator,
-                              validation_data=val_generator,
-                              steps_per_epoch=mizumashi_generator.samples// batch_size,
-                              validation_steps=val_generator.samples // batch_size,
-                              epochs=epochs,callbacks=cbks,
-                              verbose=1)
+                            validation_data=val_generator,
+                            steps_per_epoch=mizumashi_generator.samples// batch_size,
+                            validation_steps=val_generator.samples // batch_size,
+                            epochs=epochs,callbacks=cbks,
+                            verbose=1)
 
 #モデルの構造と重みを保存。
 json_string=model.to_json()
