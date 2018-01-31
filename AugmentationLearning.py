@@ -70,20 +70,20 @@ os.system('./initface.sh ')
 #水増し部分
 if(args[1]=='0'):
     DA.sepia('sp')
-    DA.high_cont('sp','0')
+    # DA.high_cont('sp','0')
     DA.data_eraser(int(110/2))
 elif(args[1]=='1'):
     DA.CE_gray('red','red')
     DA.Shape(10,-1,'red','0')
-    DA.data_eraser(int(110/2))
+    DA.data_eraser(int(220/2))
 elif (args[1]=='2'):
     DA.CE_gray('green','green')
     DA.Shape(10,-1,'green','0')
-    DA.data_eraser(int(110/2))
+    DA.data_eraser(int(220/2))
 elif (args[1]=='3'):
     DA.CE_gray('blue','blue')
     DA.Shape(10,-1,'blue','0')
-    DA.data_eraser(int(110/2))
+    DA.data_eraser(int(220/2))
 
 
 # In[599]:
@@ -148,7 +148,7 @@ opt = SGD(lr=0.05)
 #learning()
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 tb_cb=keras.callbacks.TensorBoard(log_dir=log_filepath,histogram_freq=0)
-es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=1,verbose=1,mode='auto')
+es_cb=keras.callbacks.EarlyStopping(monitor='val_loss',patience=3,verbose=1,mode='auto')
 cbks=[tb_cb,es_cb]
 
 history = model.fit_generator(mizumashi_generator,

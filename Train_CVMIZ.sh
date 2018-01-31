@@ -1,11 +1,6 @@
 #!/bin/bash
 #水増し処理を比較します
-mkdir result/AL/AL0
-mkdir result/AL/AL1
-mkdir result/AL/AL2
-mkdir result/AL/AL3
-mkdir result/AL/AL4
-
+echo [START TIME] `date`
 for i in `seq 10`
 do
     python3 AugmentationLearning.py 0 > result/AL/AL0/$i.txt
@@ -15,4 +10,4 @@ do
     python3 AugmentationLearning.py 4 > result/AL/AL4/$i.txt
 done
     
-    
+echo [END TIME] `date`

@@ -109,10 +109,6 @@ def data_eraser(ers_number):
             os.remove(img[i])
 
 
-# In[37]:
-
-
-get_ipython().run_cell_magic('bash', '', './initface.sh')
 
 
 # In[13]:
