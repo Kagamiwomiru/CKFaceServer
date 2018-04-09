@@ -17,7 +17,7 @@ import json
 
 # 画像サイズ．ResNetを使う時は224
 img_size = 224
-batch_size = 32
+batch_size = 16
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
@@ -51,8 +51,8 @@ def main():
 def data_augmentation():
     #輝度をあげる
     os.system('bash ./initface.sh')
-    DA.high_cont('DA')#hoge_DA.jpgができる。
-    #学習画像データを水増し（データ拡張）を行う
+    DA.sepia('sp')
+    DA.Shape(10, -1, 'spsp', '0')    #学習画像データを水増し（データ拡張）を行う
     mizumashi_data=ImageDataGenerator()
     mizumashi_generator=mizumashi_data.flow_from_directory(directory=root_dir,target_size=(img_size,img_size),batch_size=batch_size,shuffle=True)
     #テスト画像データを水増しする。
