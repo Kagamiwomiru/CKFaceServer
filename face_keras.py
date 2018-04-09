@@ -50,7 +50,7 @@ def main():
 
 def data_augmentation():
     #輝度をあげる
-    os.system(bash ./initface.sh DA)
+    os.system('bash ./initface.sh')
     DA.high_cont('DA')#hoge_DA.jpgができる。
     #学習画像データを水増し（データ拡張）を行う
     mizumashi_data=ImageDataGenerator()
