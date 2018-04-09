@@ -10,9 +10,23 @@ import sys
 import os
 import glob
 
+# 画像をディレクトリごとに読み込み、numpy配列にします。
+def read_from_directory(root_dir):
+    root_dirs=os.listdir(root_dir)
+    print('numpy配列に変換中...')
+    for img_dir in root_dirs:
+        print(img_dir)
+        img=glob.glob(root_dir+img_dir+'/*.jpg')
+        numpy_img = []
+        for i in img:
+             # 画像の読み込み
+            img_src = cv2.imread(i)
+            img_src=img_src.astype('float32')
+            img_src /= 255.0
+            numpy_img.append(img_src)
 
-# In[236]:
-
+    
+    return numpy_img
 
 #ハイコントラスト画像を作成します。引数にはファイルの末尾につける水増し識別子を指定します。hoge_識別子.jpg
 def high_cont(id,flag):
@@ -40,7 +54,7 @@ def high_cont(id,flag):
 
     root_dirs=os.listdir(root_dir)
 
-
+    print('輝度をあげています...')
     for img_dir in root_dirs:
         print(img_dir)
         img=glob.glob(root_dir+img_dir+'/*.jpg')
@@ -71,7 +85,7 @@ def edge_detection(id):
     root_dir='face.bak/'
     out_dir='face/'
     root_dirs=os.listdir(root_dir)
-
+    print('エッジ抽出中...')
     for img_dir in root_dirs:
         print(img_dir)
         img=glob.glob(root_dir+img_dir+'/*.jpg')
@@ -103,6 +117,7 @@ def edge_detection(id):
 def data_eraser(ers_number):
     root_dir='face/'
     root_dirs=os.listdir(root_dir)
+    print('削除中...')
     for img_dir in root_dirs:
         img=sorted(glob.glob(root_dir+img_dir+'/*.jpg'))
         for i in range(ers_number):
@@ -118,6 +133,7 @@ def sepia(id):
     root_dir='face.bak/'
     out_dir='face/'
     root_dirs=os.listdir(root_dir)
+    print('セピアに変換中')
     for img_dir in root_dirs:
             print(img_dir)
             img=glob.glob(root_dir+img_dir+'/*.jpg')
@@ -152,6 +168,7 @@ def CE_gray(color,id):
     root_dir='face.bak/'
     out_dir='face/'
     root_dirs=os.listdir(root_dir)
+    print(color+'を抽出し、グレースケール化中...')
     for img_dir in root_dirs:
                 print(img_dir)
                 img=glob.glob(root_dir+img_dir+'/*.jpg')
@@ -190,6 +207,7 @@ def Shape(k,bit,id,flag):#k=シャープの度合い(10がオススメ）bit=ビ
        
     out_dir='face/'
     root_dirs=os.listdir(root_dir)
+    print('シャープに変換中...')
 #     id='rw'
 #     #ビット深度
 #     bit=-1
