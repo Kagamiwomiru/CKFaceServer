@@ -125,7 +125,7 @@ int main(int argc ,char *argv[]) {
 	char sendcmd[255];
 	unsigned int    now = (unsigned int)time( 0 );
 	srand(now);
-	sprintf(input,"./face.bak/inpic/%s/",argv[1]);
+	sprintf(input,"./Original/%s/",argv[1]);
 	input_path=string(input);
 	input_path +="in_%03d.jpg";
 	sprintf(output,"./face.bak/%s/",argv[1]);
