@@ -21,7 +21,7 @@ batch_size = 16
 #以下ディレクトリに入っている画像を読み込む
 root_dir = "./face/"
 #学習データを何周するか
-epochs=50
+epochs=20
 #ログファイル
 log_filepath="./logs/"
 #学習したモデル

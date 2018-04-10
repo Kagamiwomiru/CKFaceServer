@@ -3,9 +3,9 @@ vector<Rect> detectFaceInImage(Mat &image) {
 	CascadeClassifier cascade_front;
 	CascadeClassifier cascade_pro;
 	CascadeClassifier cascade_eye;
-	cascade_front.load("./haarcascade_frontalface_alt2.xml");
-	cascade_pro.load("./haarcascade_frontalface_alt.xml");
-	cascade_eye.load("./haarcascade_eye.xml");
+	cascade_front.load("./cascade/haarcascade_frontalface_alt2.xml");
+	cascade_pro.load("./cascade/haarcascade_frontalface_alt.xml");
+	cascade_eye.load("./cascade/haarcascade_eye.xml");
 	vector<Rect> faces1;
 	vector<Rect> faces2;
 	vector<Rect> eyes;
@@ -66,7 +66,7 @@ vector<Rect> detectFaceInImage(Mat &image) {
 					}
 					int flag[3] = { 0, 0, 0 };
 
-					//Šç”ÍˆÍ‚ª‚©‚Ô‚Á‚Ä‚¢‚é‚Æ‚±‚ë‚Í‚È‚¢‚©Hƒ_ƒ‚ÈŽžA1‚ðflag‚É“ü‚ê‚é
+					//ï¿½ï¿½ÍˆÍ‚ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½ï¿½Í‚È‚ï¿½ï¿½ï¿½ï¿½Hï¿½_ï¿½ï¿½ï¿½ÈŽï¿½ï¿½A1ï¿½ï¿½flagï¿½É“ï¿½ï¿½ï¿½ï¿½
 					if (faces1.size() > 0) {
 						for (int k = 0; k < faces1.size(); k++) {
 							if (flag[0] == 0 && abs(X - faces1[k].x) < W*0.9 && abs(Y - faces1[k].y) < H*0.9) {
@@ -115,22 +115,25 @@ vector<Rect> detectFaceInImage(Mat &image) {
 }
 
 int main(int argc ,char *argv[]) {
-	clock_t start_time,end_time;
-	start_time=clock();
 	if(argc<2) return -1;
 	string input_path;
 	string output_path;
-	char rmcmd[SYSCMD];//set input_filepath
 	int num_images=100;
 	char input[255];
-	sprintf(input,"./face/%s/",argv[1]);
+	char output[255];
+	char mkcmd[255];
+	char sendcmd[255];
+	unsigned int    now = (unsigned int)time( 0 );
+	srand(now);
+	sprintf(input,"./face.bak/inpic/%s/",argv[1]);
 	input_path=string(input);
 	input_path +="in_%03d.jpg";
-	output_path=string(input);
+	sprintf(output,"./face.bak/%s/",argv[1]);
+	output_path=string(output);
+	output_path+=to_string(rand());
 	output_path+="out_%03d.jpg";
-
-	sprintf(rmcmd,"rm %sin_*",input);
-
+	sprintf(mkcmd,"mkdir ./face.bak/%s",argv[1]);
+	system(mkcmd);
 	int y1, x1;
 	int count = 0;
 	Mat in;
@@ -160,9 +163,6 @@ int main(int argc ,char *argv[]) {
 		}
 		count++;
 	}
-
-	system(rmcmd);//Delete all input_file. 
-	end_time=clock();
-	printf("Concert(Server):%.2f[sec]\n",(double)(end_time-start_time)/CLOCKS_PER_SEC);
+	
 return 0;
 }

@@ -1,10 +1,10 @@
 # コンパイラを指定
-CC :=g++ -std=c++11 
+CC :=g++
 # インクルードファイル等
-CFLAGS :=`pkg-config opencv --cflags` `pkg-config opencv --libs`
+CXXFLAGS := -std=c++11 ` pkg-config opencv --cflags` `pkg-config opencv --libs` 
 
 converter : main.o 
-	$(CC)  main.o -o converter   $(CFLAGS)
+	$(CC)  main.o -o converter   $(CXXFLAGS)
 
 main.o : CKFaceServerKit.h
 
